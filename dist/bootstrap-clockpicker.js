@@ -2,6 +2,9 @@
  * ClockPicker v0.0.7 (http://weareoutman.github.io/clockpicker/)
  * Copyright 2014 Wang Shenwei.
  * Licensed under MIT (https://github.com/weareoutman/clockpicker/blob/gh-pages/LICENSE)
+ *
+ * Modifications by Roman Feninets (https://github.com/rfeninets/clockpicker/):
+ * - option: inline (allows clockpicker to render inline without a popover)
  */
 
 ;(function(){
@@ -117,6 +120,8 @@
 		this.spanMinutes = popover.find('.clockpicker-span-minutes');
 		this.spanAmPm = popover.find('.clockpicker-span-am-pm');
 		this.amOrPm = "PM";
+	
+		options.inline === true && popover.addClass('inline');
 		
 		// Setup for for 12 hour clock if option is selected
 		if (options.twelvehour) {
@@ -159,7 +164,7 @@
 				
 		}
 		
-		if (! options.autoclose) {
+		if (! options.autoclose && !options.inline) {
 			// If autoclose is not setted, append a button
 			$('<button type="button" class="btn btn-sm btn-default btn-block clockpicker-button">' + options.donetext + '</button>')
 				.click($.proxy(this.done, this))
@@ -351,6 +356,7 @@
 			this.g = g;
 			this.canvas = canvas;
 		}
+		this.options.inline === true && this.show();
 
 		raiseCallback(this.options.init);
 	}
@@ -391,6 +397,8 @@
 			self = this;
 
 		popover.show();
+		if (this.options.inline)
+		  return;
 
 		// Place the popover
 		switch (placement) {
@@ -441,7 +449,8 @@
 		// Initialize
 		if (! this.isAppended) {
 			// Append popover to body
-			$body = $(document.body).append(this.popover);
+			$body = $(document.body);
+			this.options.inline ? this.popover.insertAfter(this.element) : $body.append(this.popover);
 
 			// Reset position when resize
 			$win.on('resize.clockpicker' + this.id, function(){
@@ -476,21 +485,23 @@
 		this.isShown = true;
 
 		// Hide when clicking or tabbing on any element except the clock, input and addon
-		$doc.on('click.clockpicker.' + this.id + ' focusin.clockpicker.' + this.id, function(e){
-			var target = $(e.target);
-			if (target.closest(self.popover).length === 0 &&
-					target.closest(self.addon).length === 0 &&
-					target.closest(self.input).length === 0) {
-				self.hide();
-			}
-		});
+		if (!this.options.inline) {
+			$doc.on('click.clockpicker.' + this.id + ' focusin.clockpicker.' + this.id, function(e){
+				var target = $(e.target);
+				if (target.closest(self.popover).length === 0 &&
+						target.closest(self.addon).length === 0 &&
+						target.closest(self.input).length === 0) {
+					self.hide();
+				}
+			});
 
-		// Hide when ESC is pressed
-		$doc.on('keyup.clockpicker.' + this.id, function(e){
-			if (e.keyCode === 27) {
-				self.hide();
-			}
-		});
+			// Hide when ESC is pressed
+			$doc.on('keyup.clockpicker.' + this.id, function(e){
+				if (e.keyCode === 27) {
+					self.hide();
+				}
+			});
+		}
 
 		raiseCallback(this.options.afterShow);
 	};

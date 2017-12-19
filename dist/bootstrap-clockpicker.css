@@ -2,6 +2,9 @@
  * ClockPicker v0.0.7 for Bootstrap (http://weareoutman.github.io/clockpicker/)
  * Copyright 2014 Wang Shenwei.
  * Licensed under MIT (https://github.com/weareoutman/clockpicker/blob/gh-pages/LICENSE)
+ *
+ * Modifications by Roman Feninets (https://github.com/rfeninets/clockpicker/):
+ * - option: inline (allows clockpicker to render inline without a popover)
  */
 
 .clockpicker .input-group-addon {
@@ -165,4 +168,23 @@
 	padding: 5px;
 	border: 1px solid rgba(0, 0, 0, .2);
 	border-radius: 4px;
+}
+.clockpicker-popover.inline {
+  position: static; 
+  width: 230px;
+  box-shadow: none;
+  border: none;
+  margin-top: 0;
+}
+.clockpicker-popover.inline .arrow {
+  display: none;
+}
+
+.clockpicker-popover.inline .popover-title {
+  padding: 0;
+  border: none;
+}
+
+.clockpicker-popover.inline .popover-content {
+  background: none;
 }
